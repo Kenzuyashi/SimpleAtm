@@ -10,6 +10,7 @@ val df = DecimalFormat("#.##")
 
 data class Customer(var accnumber: Int,var pin: Int,var nameid: String,var fname: String, var bal: Double)
 
+// main data to costumers
 object CustomerList {
     var customerList = listOf(
         Customer(112223,1234,"dan","daniel tann", 500.0),
@@ -18,8 +19,8 @@ object CustomerList {
         Customer(322112,2323,"jan","janwel cruz", 500.0)
     )
 }
-fun List<Customer>.filterByAccn(accnumber: Int) = this.filter { it.accnumber == accnumber } //filter and find Customer By Pin
-fun List<Customer>.filterByPin(pin: Int) = this.filter { it.pin == pin }
+fun List<Customer>.filterByAccn(accnumber: Int) = this.filter { it.accnumber == accnumber } //filter and find Customer By Account number
+fun List<Customer>.filterByPin(pin: Int) = this.filter { it.pin == pin }//filter and find Customer By pin
 fun List<Customer>.filterByUser(nameid: String) = this.filter { it.nameid == nameid } //filter and find Customer By Account Name
 
 fun main() {
@@ -31,7 +32,7 @@ fun main() {
         algo()
     }
 }
-
+// Operation functions
 fun operation(ope: Any, user: Customer){
     when(ope) {
         1 -> { withdraw(user)
@@ -58,17 +59,21 @@ fun operation(ope: Any, user: Customer){
         }
     }
     }
+
+//main function
 fun algo(){
     try {
         if (name == null){
         print("Enter user:")
         name = readLine().toString()
         }
+        //check data user if existing
         var lg = name?.let { CustomerList.customerList.filterByUser(it) }
         if (lg != null) {
             if (lg.last()!=null) {
                 print("Enter pin:")
                 pin = Integer.valueOf(readLine())
+                //check pin is match to user
                 var validPin: Customer = getpin(pin)
                 var user = pin?.let { CustomerList.customerList.filterByPin(it) }
                 if (user != null) {
@@ -91,6 +96,7 @@ fun algo(){
         algo()
     }
 }
+//in addition, customer can choose to continue or exit
 fun additional(user: Customer){
 
     println("Do you want another Operation? \nEnter 1: to continue. 2: to login again. 3: exit")
@@ -113,9 +119,11 @@ fun additional(user: Customer){
         additional(user)
     }
 }
+//displays the additional features
 fun display(){
     println("Select operation you want to perform:\n 1: Withdraw. 2: Deposit. 3: Balance. 4: Send Money. 5: logout \")")
 }
+//withdraw features
 fun withdraw(user: Customer) {
     println("Your Balance is ${checkBal(user)} Petots")
     print("Input Amount to Withdraw :")
@@ -138,6 +146,7 @@ fun withdraw(user: Customer) {
         }
     }
 }
+//depo features
 fun deposit(user: Customer){
     print("Input Amount to Deposit : ")
     var isAmount = false
@@ -156,14 +165,16 @@ fun deposit(user: Customer){
     }
 }
 
-
+//check bal features
 fun checkBal(user: Customer): Any {
     return df.format(user.bal).toDouble()
 }
+//displays log-in name customer
 fun displayname(user: Customer){
   var dname = user.fname
    return println("Welcome $dname")
 }
+//check valid pin feature
 fun getpin(pin: Int): Customer{
     var result =  Customer(0,0, "","",0.0)
     for(customer in CustomerList.customerList){
@@ -172,7 +183,7 @@ fun getpin(pin: Int): Customer{
         }
     }
     return result
-}
+}// send money features
 fun sendMoney(user: Customer){
     var isAccountNumber = false
     var accnumber = 0
