@@ -1,8 +1,6 @@
 import java.lang.Exception
 import java.text.DecimalFormat
 
-
-var amount = 0
 var islive :Boolean = false
 var name: String? = null
 var pin: Int = 0
@@ -20,7 +18,6 @@ object CustomerList {
     )
 }
 fun List<Customer>.filterByAccn(accnumber: Int) = this.filter { it.accnumber == accnumber } //filter and find Customer By Account number
-fun List<Customer>.filterByPin(pin: Int) = this.filter { it.pin == pin }//filter and find Customer By pin
 fun List<Customer>.filterByUser(nameid: String) = this.filter { it.nameid == nameid } //filter and find Customer By Account Name
 
 fun main() {
@@ -55,30 +52,29 @@ fun operation(ope: Any, user: Customer){
             println("Invalid input!!")
             display()
             var select = Integer.valueOf(readLine())
-                operation(select, user)
+            operation(select, user)
         }
     }
-    }
+}
 
 //main function
 fun algo(){
     try {
         if (name == null){
-        print("Enter user:")
-        name = readLine().toString()
+            print("Enter user:")
+            name = readLine().toString()
         }
         //check data user if existing
-        var lg = name?.let { CustomerList.customerList.filterByUser(it) }
-        if (lg != null) {
-            if (lg.last()!=null) {
+        var user = name?.let { CustomerList.customerList.filterByUser(it) }
+        if (user != null) {
+            if (user.last()!=null) {
                 print("Enter pin:")
                 pin = Integer.valueOf(readLine())
                 //check pin is match to user
                 var validPin: Customer = getpin(pin)
-                var user = pin?.let { CustomerList.customerList.filterByPin(it) }
                 if (user != null) {
-                    if (lg.last()!=null && pin.equals(validPin.pin)) {
-                        displayname(user.last())
+                    if (user.last()!=null && pin.equals(validPin.pin)) {
+                        dispName(user.last())
                         display()
                         var select = Integer.valueOf(readLine())
                         operation(select,user.last())
@@ -170,19 +166,19 @@ fun checkBal(user: Customer): Any {
     return df.format(user.bal).toDouble()
 }
 //displays log-in name customer
-fun displayname(user: Customer){
-  var dname = user.fname
-   return println("Welcome $dname")
+fun dispName(user: Customer){
+    var dname = user.fname
+    return println("Welcome $dname")
 }
 //check valid pin feature
 fun getpin(pin: Int): Customer{
-    var result =  Customer(0,0, "","",0.0)
+    var fpin =  Customer(0,0, "","",0.0)
     for(customer in CustomerList.customerList){
         if(customer.pin == pin){
-            result = customer
+            fpin = customer
         }
     }
-    return result
+    return fpin
 }// send money features
 fun sendMoney(user: Customer){
     var isAccountNumber = false
