@@ -2,23 +2,23 @@ import java.lang.Exception
 import java.text.DecimalFormat
 
 var islive :Boolean = false
-var name: String? = null
+var name: String = ""
 var pin: Int = 0
 val df = DecimalFormat("#.##")
 
-data class Customer(var accnumber: Int,var pin: Int,var nameid: String,var fname: String, var bal: Double)
+data class Customer(var accnumber: Int, var pin: Int, var user: String, var name: String, var bal: Double)
 
 // main data to costumers
 object CustomerList {
     var customerList = listOf(
-        Customer(112223,1234,"dan","daniel tann", 500.0),
-        Customer(334443,1221,"bob","bob marley", 500.0),
-        Customer(444212,1212,"ted","teddy bear", 500.0),
-        Customer(322112,2323,"jan","janwel cruz", 500.0)
+        Customer(112223,1234,"dan","daniel", 500.0),
+        Customer(334443,1221,"bob","bobot", 500.0),
+        Customer(444212,1212,"ted","teddy", 500.0),
+        Customer(322112,2323,"jan","janwel", 500.0)
     )
 }
 fun List<Customer>.filterByAccn(accnumber: Int) = this.filter { it.accnumber == accnumber } //filter and find Customer By Account number
-fun List<Customer>.filterByUser(nameid: String) = this.filter { it.nameid == nameid } //filter and find Customer By Account Name
+fun List<Customer>.filterByUser(nameid: String) = this.filter { it.user == nameid } //filter and find Customer By Account Name
 
 fun main() {
     if (!islive) {
@@ -45,7 +45,7 @@ fun operation(ope: Any, user: Customer){
             additional(user)}
         5 -> { println("logout")
             pin = 0
-            name = null
+            name = ""
             algo()
         }
         else -> {
@@ -60,35 +60,32 @@ fun operation(ope: Any, user: Customer){
 //main function
 fun algo(){
     try {
-        if (name == null){
+        if (name.isEmpty()){
             print("Enter user:")
             name = readLine().toString()
         }
         //check data user if existing
-        var user = name?.let { CustomerList.customerList.filterByUser(it) }
-        if (user != null) {
-            if (user.last()!=null) {
+        var getd = CustomerList.customerList.filterByUser(name)
+        var user = getd.get(0)
+            if (!name.isEmpty()) {
                 print("Enter pin:")
                 pin = Integer.valueOf(readLine())
                 //check pin is match to user
                 var validPin: Customer = getpin(pin)
-                if (user != null) {
-                    if (user.last()!=null && pin.equals(validPin.pin)) {
-                        dispName(user.last())
-                        display()
-                        var select = Integer.valueOf(readLine())
-                        operation(select,user.last())
-                    } else{
-                        println("Wrong pass please try again")
-                        algo()
-                        name = null
-                    }
+                if (user.equals(validPin)) {
+                    dispName(user)
+                    display()
+                    var select = Integer.valueOf(readLine())
+                    operation(select, user)
+                } else {
+                    println("Wrong pin please try again")
+                    name = ""
+                    algo()
                 }
             }
-        }
     } catch (e: Exception) {
         println("User does not exist")
-        name = null
+        name = ""
         algo()
     }
 }
@@ -101,7 +98,7 @@ fun additional(user: Customer){
         algo()
     } else if (state == 2) {
         println("Thank you for banking!")
-        name = null
+        name = ""
         pin = 0
         algo()
     } else if (state == 3) {
@@ -122,7 +119,7 @@ fun display(){
 //withdraw features
 fun withdraw(user: Customer) {
     println("Your Balance is ${checkBal(user)} Petots")
-    print("Input Amount to Withdraw :")
+    print("Input Amount to Withdraw : ")
     var isAmount = false
     while (!isAmount) {
         try {
@@ -135,10 +132,10 @@ fun withdraw(user: Customer) {
                 println("Your Balance now is $balance Petots")
                 isAmount = true
             } else {
-                println("Please Input Amount Lower Than Your Balance :")
+                print("Please Input Amount Lower Than Your Balance : ")
             }
         } catch (e: Exception) {
-            print("Please Input Amount :")
+            print("Please Input Amount : ")
         }
     }
 }
@@ -167,7 +164,7 @@ fun checkBal(user: Customer): Any {
 }
 //displays log-in name customer
 fun dispName(user: Customer){
-    var dname = user.fname
+    var dname = user.name
     return println("Welcome $dname")
 }
 //check valid pin feature
@@ -179,7 +176,8 @@ fun getpin(pin: Int): Customer{
         }
     }
     return fpin
-}// send money features
+}
+// send money features
 fun sendMoney(user: Customer){
     var isAccountNumber = false
     var accnumber = 0
@@ -197,16 +195,16 @@ fun sendMoney(user: Customer){
                     accountName = readLine().toString()
                 }
                 else{
-                    if (user2.fname.equals(accountName, ignoreCase = true)){
+                    if (user2.name.equals(accountName, ignoreCase = true)){
                         try {
-                            print("Input Amount to send to ${user2.fname}: ")
+                            print("Input Amount to send to ${user2.name}: ")
                             val amount = readLine()
 
                             if(money >= (amount?.toDouble()!!)){
                                 val balance = money - (amount.toDouble())
                                 user2.bal = user2.bal + amount.toDouble()
                                 user.bal = balance
-                                println("$amount petots is Transfer to ${user2.fname} Successfully")
+                                println("$amount petots is Transfer to ${user2.name} Successfully")
                                 println("Your Balance is now $balance Petots.")
                                 isAccountNumber = true
                             }else{
